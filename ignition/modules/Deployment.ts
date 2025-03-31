@@ -1,18 +1,13 @@
 //ignition/modules/Deployment.ts
+//SPDX-License-Identifier: MIT
+
 
 import { buildModule } from '@nomicfoundation/hardhat-ignition/modules';
 
 const DeploymentModule = buildModule('DeploymentModule', (m) => {
-  const LiangToken = m.contract('LiangToken');
-  const ICO = m.contract('ICO', [LiangToken]);
+  const RemittanceToken = m.contract('RemittanceToken');
 
-  const owner = m.getAccount(0);
-  const totalSupply = m.staticCall(LiangToken, 'totalSupply');
-  m.call(LiangToken, 'approve', [ICO, totalSupply], {
-    from: owner,
-  });
-
-  return { LiangToken, ICO };
+  return { RemittanceToken };
 });
 
 export default DeploymentModule;
