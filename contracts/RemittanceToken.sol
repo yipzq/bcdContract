@@ -5,26 +5,47 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract RemittanceToken is ERC20, Ownable {
-    event TokensMinted(address indexed user, uint256 amount);
-    event TokensBurned(address indexed user, uint256 amount);
+    event TokensMinted(address indexed user, uint256 tokenAmount);
+    event TokensBurned(address indexed user, uint256 tokenAmount);
+    
+    // Add a public minting flag that only the owner can toggle
+    bool public publicMintingEnabled;
+    
+    constructor() ERC20("RemittanceToken", "RMT") Ownable(msg.sender) {
+        publicMintingEnabled = false; 
+    }
+    
+    // Function to toggle public minting (only owner)
+    function togglePublicMinting(bool enabled) external onlyOwner {
+        publicMintingEnabled = enabled;
+    }
 
-    constructor() ERC20("RemittanceToken", "RMT") Ownable(msg.sender) {}
+    // Modified to allow public minting when enabled
+    function mintForUser(address user, uint256 balance) external {
+        require(balance > 0, "Amount must be greater than zero");
+        
+        // Allow either the owner OR anyone when public minting is enabled
+        require(msg.sender == owner() || publicMintingEnabled, 
+                "Not authorized to mint tokens");
 
-    function mintForUser(address user, uint256 usdAmount) external onlyOwner {
-        require(usdAmount > 0, "Amount must be greater than zero");
-
-        uint256 tokenAmount = usdAmount * 10**decimals();
+        uint256 tokenAmount = balance * 10**decimals();
         _mint(user, tokenAmount);
 
         emit TokensMinted(user, tokenAmount);
     }
 
-    function burnTokensForUSD(address user, uint256 tokenAmount) external onlyOwner {
+    // Keep burn function only for owner
+    function burnTokensForUSD(address user, uint256 tokenAmount) external {
         require(tokenAmount > 0, "Amount must be greater than zero");
         require(balanceOf(user) >= tokenAmount, "Insufficient RMT balance");
+        
+        // Allow either the owner OR the token holder themselves
+        require(msg.sender == owner() || msg.sender == user, 
+                "Not authorized to burn these tokens");
 
         _burn(user, tokenAmount);
 
         emit TokensBurned(user, tokenAmount);
-    }
+}
+
 }
