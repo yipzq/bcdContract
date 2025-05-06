@@ -6,7 +6,8 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract RemittanceToken is ERC20, Ownable {
     event TokensMinted(address indexed user, uint256 tokenAmount);
-    event TokensBurned(address indexed user, uint256 tokenAmount);
+    event TokensBurned(address indexed user, uint256 tokenAmount);    
+    event TokensSent(address indexed from, address indexed to, uint256 amount);   // for tracking token transfers
     
     // Add a public minting flag that only the owner can toggle
     bool public publicMintingEnabled;
@@ -46,6 +47,23 @@ contract RemittanceToken is ERC20, Ownable {
         _burn(user, tokenAmount);
 
         emit TokensBurned(user, tokenAmount);
-}
+    }
+
+    // send tokens to another user
+    function sendTokens(address recipient, uint256 amount) external returns (bool) {
+        require(recipient != address(0), "Cannot send to zero address");
+        require(amount > 0, "Amount must be greater than zero");
+        require(balanceOf(msg.sender) >= amount, "Insufficient balance");
+        
+        // Use the standard ERC20 transfer function
+        bool success = transfer(recipient, amount);
+        
+        // Emit custom event for better tracking
+        if (success) {
+            emit TokensSent(msg.sender, recipient, amount);
+        }
+        
+        return success;
+    }
 
 }
