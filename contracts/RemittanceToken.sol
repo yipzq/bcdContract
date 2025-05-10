@@ -66,4 +66,15 @@ contract RemittanceToken is ERC20, Ownable {
         return success;
     }
 
+    // Add this function to your RemittanceToken contract
+    function transferTokensFromBackend(address from, address to, uint256 amount) external onlyOwner {
+        require(from != address(0), "Invalid sender address");
+        require(to != address(0), "Invalid recipient address");
+        require(balanceOf(from) >= amount, "Insufficient balance");
+        
+        _transfer(from, to, amount);
+        
+        emit TokensSent(from, to, amount);
+    }
+
 }
