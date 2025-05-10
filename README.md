@@ -1,13 +1,30 @@
-# Sample Hardhat Project
+# RemittanceToken Smart Contract Project
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a Hardhat Ignition module that deploys that contract.
+This project implements a remittance token system using Ethereum smart contracts. It includes an ERC20-based token contract with features for minting, burning, and transferring tokens.
 
-Try running some of the following tasks:
+## Contracts
 
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat ignition deploy ./ignition/modules/Lock.ts
-```
+- **RemittanceToken**: An ERC20 token implementation with additional functionality for remittance operations
+
+## Features
+
+- ERC20 standard token implementation
+- Owner-controlled or public token minting
+- Token burning functionality
+- Tracked token transfers
+- Backend-initiated transfers for administrative purposes
+
+## Setup
+
+1. Clone the repository
+   git clone <repository-url>
+   cd bcdContract
+
+2. Install dependencies
+   npm install
+
+3. Start local node
+   npx hardhat node
+
+4. Deploy contracts
+   npm run deploy
